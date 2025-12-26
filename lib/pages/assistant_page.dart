@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/post.dart';
 import '../models/ai_message.dart';
 import '../services/mock_service.dart';
+import '../constants/app_colors.dart';
 import 'post_detail_page.dart';
 import 'ai_chat_page.dart';
 
@@ -48,13 +49,17 @@ class _AssistantPageState extends State<AssistantPage> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.scaffoldBackground,
       appBar: AppBar(
         title: const Text('灵境智能助手'),
         bottom: TabBar(
           controller: _tabController,
+          indicatorColor: AppColors.primaryBlue,
+          labelColor: AppColors.primaryBlue,
+          unselectedLabelColor: AppColors.graySecondary,
           tabs: const [
-            Tab(text: '社区', icon: Icon(Icons.people)),
-            Tab(text: 'AI对话', icon: Icon(Icons.chat)),
+            Tab(text: '社区', icon: Icon(Icons.people_outline)),
+            Tab(text: 'AI对话', icon: Icon(Icons.chat_bubble_outline)),
           ],
         ),
       ),
@@ -73,15 +78,28 @@ class _AssistantPageState extends State<AssistantPage> with SingleTickerProvider
   /// 社区帖子流
   Widget _buildCommunityFeed() {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(
+          color: AppColors.primaryBlue,
+        ),
+      );
     }
 
     if (_posts.isEmpty) {
-      return const Center(child: Text('暂无帖子'));
+      return Center(
+        child: Text(
+          '暂无帖子',
+          style: TextStyle(
+            color: AppColors.graySecondary,
+            fontSize: 17,
+          ),
+        ),
+      );
     }
 
     return RefreshIndicator(
       onRefresh: _loadPosts,
+      color: AppColors.primaryBlue,
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: _posts.length,
@@ -94,20 +112,35 @@ class _AssistantPageState extends State<AssistantPage> with SingleTickerProvider
 
   /// 帖子卡片
   Widget _buildPostCard(Post post) {
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => PostDetailPage(post: post),
-            ),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            offset: const Offset(0, 2),
+            blurRadius: 8,
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => PostDetailPage(post: post),
+              ),
+            );
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 作者信息
@@ -125,15 +158,16 @@ class _AssistantPageState extends State<AssistantPage> with SingleTickerProvider
                         Text(
                           post.authorName,
                           style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 17,
+                            color: AppColors.grayTitle,
                           ),
                         ),
                         Text(
                           _formatTime(post.publishTime),
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 12,
+                          style: const TextStyle(
+                            color: AppColors.graySecondary,
+                            fontSize: 13,
                           ),
                         ),
                       ],
@@ -148,15 +182,16 @@ class _AssistantPageState extends State<AssistantPage> with SingleTickerProvider
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  color: AppColors.grayTitle,
                 ),
               ),
               const SizedBox(height: 8),
               // 内容
               Text(
                 post.content,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[700],
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: AppColors.grayText,
                 ),
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
@@ -175,9 +210,13 @@ class _AssistantPageState extends State<AssistantPage> with SingleTickerProvider
                         margin: const EdgeInsets.only(right: 8),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
-                          color: Colors.grey[200],
+                          color: AppColors.grayBackground,
                         ),
-                        child: const Icon(Icons.image, size: 50),
+                        child: const Icon(
+                          Icons.image,
+                          size: 50,
+                          color: AppColors.graySecondary,
+                        ),
                       );
                     },
                   ),
@@ -189,10 +228,22 @@ class _AssistantPageState extends State<AssistantPage> with SingleTickerProvider
                 Wrap(
                   spacing: 8,
                   children: post.tags.map((tag) {
-                    return Chip(
-                      label: Text(tag),
-                      backgroundColor: Colors.purple[50],
-                      labelStyle: TextStyle(color: Colors.purple[700]),
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryBlueLight,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        tag,
+                        style: const TextStyle(
+                          color: AppColors.primaryBlue,
+                          fontSize: 13,
+                        ),
+                      ),
                     );
                   }).toList(),
                 ),
@@ -204,14 +255,14 @@ class _AssistantPageState extends State<AssistantPage> with SingleTickerProvider
                   _buildActionButton(
                     icon: post.isLiked ? Icons.favorite : Icons.favorite_border,
                     label: '${post.likes}',
-                    color: post.isLiked ? Colors.red : Colors.grey,
+                    color: post.isLiked ? AppColors.error : AppColors.graySecondary,
                     onTap: () {
                       // TODO: 调用点赞接口
                     },
                   ),
                   const SizedBox(width: 24),
                   _buildActionButton(
-                    icon: Icons.comment,
+                    icon: Icons.comment_outlined,
                     label: '${post.comments}',
                     onTap: () {
                       // TODO: 跳转到评论页面
@@ -219,7 +270,7 @@ class _AssistantPageState extends State<AssistantPage> with SingleTickerProvider
                   ),
                   const SizedBox(width: 24),
                   _buildActionButton(
-                    icon: Icons.share,
+                    icon: Icons.share_outlined,
                     label: '${post.shares}',
                     onTap: () {
                       // TODO: 调用分享接口
@@ -231,6 +282,7 @@ class _AssistantPageState extends State<AssistantPage> with SingleTickerProvider
           ),
         ),
       ),
+      ),
     );
   }
 
@@ -240,17 +292,31 @@ class _AssistantPageState extends State<AssistantPage> with SingleTickerProvider
     Color? color,
     required VoidCallback onTap,
   }) {
-    return InkWell(
-      onTap: onTap,
-      child: Row(
-        children: [
-          Icon(icon, color: color ?? Colors.grey, size: 20),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(color: color ?? Colors.grey, fontSize: 14),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: color ?? AppColors.graySecondary,
+                size: 20,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  color: color ?? AppColors.graySecondary,
+                  fontSize: 15,
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

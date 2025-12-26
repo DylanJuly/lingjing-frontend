@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import '../services/mock_service.dart';
 import '../models/solar_term.dart';
 import '../models/recipe.dart';
+import '../constants/app_colors.dart';
 import 'diet_page.dart';
 
 /// 首页 - 包含所有功能模块入口
@@ -43,10 +44,16 @@ class _MainHomePageState extends State<MainHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.scaffoldBackground,
       body: RefreshIndicator(
         onRefresh: _loadData,
+        color: AppColors.primaryBlue,
         child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.primaryBlue,
+                ),
+              )
             : SingleChildScrollView(
                 child: Column(
                   children: [
@@ -78,7 +85,7 @@ class _MainHomePageState extends State<MainHomePage> {
   Widget _buildSearchBar() {
     return Container(
       padding: const EdgeInsets.all(16),
-      color: Colors.white,
+      color: AppColors.white,
       child: InkWell(
         onTap: () {
           // TODO: 跳转到搜索页面
@@ -89,16 +96,19 @@ class _MainHomePageState extends State<MainHomePage> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(24),
+            color: AppColors.inputBackground,
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
             children: const [
-              Icon(Icons.search, color: Colors.grey),
+              Icon(Icons.search, color: AppColors.graySecondary, size: 20),
               SizedBox(width: 8),
               Text(
                 '搜索帖子、食谱、健康知识',
-                style: TextStyle(color: Colors.grey),
+                style: TextStyle(
+                  color: AppColors.graySecondary,
+                  fontSize: 17,
+                ),
               ),
             ],
           ),
@@ -311,8 +321,20 @@ class _MainHomePageState extends State<MainHomePage> {
   }
 
   Widget _buildSectionCard({required String title, required List<Widget> children}) {
-    return Card(
+    return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            offset: const Offset(0, 2),
+            blurRadius: 8,
+            spreadRadius: 0,
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -323,6 +345,7 @@ class _MainHomePageState extends State<MainHomePage> {
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
+                color: AppColors.grayTitle,
               ),
             ),
             const SizedBox(height: 12),
@@ -338,80 +361,115 @@ class _MainHomePageState extends State<MainHomePage> {
     required String title,
     required VoidCallback onTap,
   }) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Row(
-          children: [
-            Icon(icon, color: const Color(0xFF6B46C1)),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                title,
-                style: const TextStyle(fontSize: 16),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryBlueLight,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  icon,
+                  color: AppColors.primaryBlue,
+                  size: 20,
+                ),
               ),
-            ),
-            const Icon(Icons.chevron_right, color: Colors.grey),
-          ],
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    color: AppColors.grayText,
+                  ),
+                ),
+              ),
+              const Icon(
+                Icons.chevron_right,
+                color: AppColors.graySecondary,
+                size: 20,
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildRecipeCard(Recipe recipe) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => DietPage()),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.grey[50],
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.grey[200],
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => DietPage()),
+          );
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.grayBackground,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: AppColors.primaryBlueLight,
+                ),
+                child: const Icon(
+                  Icons.restaurant,
+                  size: 30,
+                  color: AppColors.primaryBlue,
+                ),
               ),
-              child: const Icon(Icons.restaurant, size: 30),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    recipe.name,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      recipe.name,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.grayTitle,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    recipe.description,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
+                    const SizedBox(height: 4),
+                    Text(
+                      recipe.description,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: AppColors.graySecondary,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const Icon(Icons.chevron_right, color: Colors.grey),
-          ],
+              const Icon(
+                Icons.chevron_right,
+                color: AppColors.graySecondary,
+                size: 20,
+              ),
+            ],
+          ),
         ),
       ),
     );
